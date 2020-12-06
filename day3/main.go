@@ -1,12 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 
 	"aoc2020/cher"
 	"aoc2020/shared"
-
-	"github.com/kr/pretty"
 )
 
 func main() {
@@ -48,7 +47,7 @@ func main() {
 		acc *= n
 	}
 
-	pretty.Println(acc)
+	fmt.Println(acc)
 }
 
 func parseInput() (*Terrain, error) {

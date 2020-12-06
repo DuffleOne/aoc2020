@@ -37,25 +37,15 @@ func main() {
 }
 
 func parseFile() ([]*Doc, error) {
-	lines, err := shared.ReadLines("./input.txt")
+	lines, err := shared.ReadGroupsAsLine("./input.txt", " ")
 	if err != nil {
 		return nil, err
 	}
 
 	var set []*Doc
 
-	var index *Doc
 	for _, l := range lines {
-		if len(l) == 0 {
-			set = append(set, index)
-			index = nil
-			continue
-		}
-
-		if index == nil {
-			index = &Doc{}
-		}
-
+		doc := &Doc{}
 		matches := re.FindAllStringSubmatch(l, -1)
 
 		for _, m := range matches {
@@ -65,14 +55,14 @@ func parseFile() ([]*Doc, error) {
 				})
 			}
 
-			err = index.AddElement(m[1], m[2])
+			err = doc.AddElement(m[1], m[2])
 			if err != nil {
 				return nil, err
 			}
 		}
-	}
 
-	set = append(set, index)
+		set = append(set, doc)
+	}
 
 	return set, nil
 }

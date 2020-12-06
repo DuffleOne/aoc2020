@@ -13,15 +13,15 @@ func main() {
 }
 
 func part1() {
-	lineSets, err := shared.ReadGroups("./input.txt")
+	lines, err := shared.ReadGroupsAsLine("./input.txt", "")
 	if err != nil {
 		panic(err)
 	}
 
 	var totalCount int
 
-	for _, ls := range lineSets {
-		totalCount += countLineSum(ls)
+	for _, l := range lines {
+		totalCount += countLineSum(l)
 	}
 
 	fmt.Println(totalCount)
@@ -42,9 +42,7 @@ func part2() {
 	fmt.Println(totalCount)
 }
 
-func countLineSum(set []string) int {
-	line := strings.Join(set, "")
-
+func countLineSum(line string) int {
 	m := map[rune]struct{}{}
 
 	for _, l := range line {

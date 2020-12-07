@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"aoc2020/shared"
@@ -14,6 +15,11 @@ var rootReg = regexp.MustCompile(`^([a-z\s]+)\sbags contain\s`)
 var subReg = regexp.MustCompile(`^(\d)\s([a-z\s]+)\sbags?.?$`)
 
 func main() {
+	part1()
+	part2()
+}
+
+func part1() {
 	bags, err := parse()
 	if err != nil {
 		shared.HandleErr(err)
@@ -24,7 +30,7 @@ func main() {
 beginning:
 	for _, bag := range bags {
 		for _, children := range bag.Children {
-			if contains(set, children) && !contains(set, bag.Color) {
+			if contains(set, children.Color) && !contains(set, bag.Color) {
 				set = append(set, bag.Color)
 				goto beginning
 			}
@@ -32,6 +38,39 @@ beginning:
 	}
 
 	fmt.Println(len(set) - 1)
+}
+
+func part2() {
+	bags, err := parse()
+	if err != nil {
+		shared.HandleErr(err)
+	}
+
+	m := map[string]map[string]int{}
+
+	for _, bag := range bags {
+		children := map[string]int{}
+
+		for _, child := range bag.Children {
+			children[child.Color] = child.Count
+		}
+
+		m[bag.Color] = children
+	}
+
+	fmt.Println(countChildren(m, goal))
+}
+
+func countChildren(m map[string]map[string]int, str string) int {
+	children := m[str]
+
+	var total int
+
+	for child, count := range children {
+		total += count * (1 + countChildren(m, child))
+	}
+
+	return total
 }
 
 func parse() ([]*Bag, error) {
@@ -58,32 +97,39 @@ func parseLine(line string) *Bag {
 	parsedRest := parseRest(rest)
 
 	return &Bag{
+		Count:    1,
 		Color:    bagColor,
 		Children: parsedRest,
 	}
 }
 
-func parseRest(line string) []string {
+func parseRest(line string) []*Bag {
 	parts := strings.Split(line, ", ")
 
-	set := []string{}
+	set := []*Bag{}
 
 	for _, part := range parts {
 		matches := subReg.FindAllStringSubmatch(part, -1)
 
 		if len(matches) == 0 {
-			return []string{}
+			return nil
 		}
 
-		set = append(set, matches[0][2])
+		n, err := strconv.Atoi(matches[0][1])
+		if err != nil {
+			panic(err)
+		}
+
+		set = append(set, &Bag{Count: n, Color: matches[0][2]})
 	}
 
 	return set
 }
 
 type Bag struct {
+	Count    int
 	Color    string
-	Children []string
+	Children []*Bag
 }
 
 func contains(s []string, e string) bool {

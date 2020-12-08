@@ -1,12 +1,17 @@
 package shared
 
 import (
-	"aoc2020/cher"
 	"encoding/json"
 	"fmt"
+
+	"aoc2020/cher"
 )
 
 func HandleErr(err error) {
+	if err == nil {
+		return
+	}
+
 	if v, ok := err.(cher.E); ok {
 		bytes, err := json.MarshalIndent(v, "", "\t")
 		if err != nil {

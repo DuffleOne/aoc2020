@@ -31,7 +31,7 @@ func part1() {
 			break
 		}
 
-		d := diff(numbers[i+1], n)
+		d := numbers[i+1] - n
 		diffs[d]++
 	}
 
@@ -56,10 +56,6 @@ func part2() {
 	}
 
 	fmt.Println(acc[numbers[len(numbers)-1]])
-}
-
-func diff(h, l int) int {
-	return h - l
 }
 
 func parse() ([]int, error) {

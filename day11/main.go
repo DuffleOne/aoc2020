@@ -30,7 +30,17 @@ func main() {
 		shared.HandleErr(err)
 	}
 
-	fmt.Println(runRules(seats, 4))
+	fmt.Println(runRules(seats, 4, func(p1, p2 image.Point) image.Point {
+		return p1.Add(p2)
+	}))
+
+	fmt.Println(runRules(seats, 5, func(p1, p2 image.Point) image.Point {
+		for seats[p1.Add(p2)] == '.' {
+			p1 = p1.Add(p2)
+		}
+
+		return p1.Add(p2)
+	}))
 }
 
 func parse() (map[image.Point]rune, error) {
@@ -50,7 +60,7 @@ func parse() (map[image.Point]rune, error) {
 	return seats, nil
 }
 
-func runRules(seats map[image.Point]rune, radius int) (out int) {
+func runRules(seats map[image.Point]rune, radius int, adjFunc func(p1, p2 image.Point) image.Point) (out int) {
 	for {
 		totalOccupied := 0
 		// you shouldn't change the values as you iterate over
@@ -62,7 +72,7 @@ func runRules(seats map[image.Point]rune, radius int) (out int) {
 
 			// get count of occupied adjacent seats
 			for _, coord := range pointMap {
-				if seats[getAdjacent(pos, coord)] == occcupied {
+				if seats[adjFunc(pos, coord)] == occcupied {
 					seatCount++
 				}
 			}
@@ -91,8 +101,4 @@ func runRules(seats map[image.Point]rune, radius int) (out int) {
 		out = totalOccupied
 		seats = iSeats
 	}
-}
-
-func getAdjacent(p1, p2 image.Point) image.Point {
-	return p1.Add(p2)
 }

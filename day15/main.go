@@ -1,8 +1,9 @@
 package main
 
 import (
-	"aoc2020/shared"
 	"fmt"
+
+	"aoc2020/shared"
 )
 
 func main() {

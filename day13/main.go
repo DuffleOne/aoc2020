@@ -1,12 +1,13 @@
 package main
 
 import (
-	"aoc2020/cher"
-	"aoc2020/shared"
 	"fmt"
 	"math"
 	"strconv"
 	"strings"
+
+	"aoc2020/cher"
+	"aoc2020/shared"
 )
 
 func main() {

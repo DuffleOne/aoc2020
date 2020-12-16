@@ -54,37 +54,27 @@ func part2() {
 		}
 	}
 
-	ruleMapping := map[int]map[string]struct{}{}
+	possibilities := len(validTickets[0])
 
-	for i := 0; i < len(validTickets[0]); i++ {
-		set := map[string]struct{}{}
+	ruleMapping := map[string]map[int]struct{}{}
 
-		for _, rule := range rules {
-			set[rule.Name] = struct{}{}
+	for _, rule := range rules {
+		set := map[int]struct{}{}
+
+		for i := 0; i < possibilities; i++ {
+			set[i] = struct{}{}
 		}
 
-		ruleMapping[i] = set
+		ruleMapping[rule.Name] = set
 	}
 
-	for i := 0; i < len(validTickets[0]); i++ {
+	pretty.Println(ruleMapping)
+
+	for _, rule := range rules {
 		for _, ticket := range validTickets {
-			num := ticket[i]
-
-			for _, rule := range rules {
+			for i, num := range ticket {
 				if !rule.Validate(num) {
-					delete(ruleMapping[i], rule.Name)
-
-					if len(ruleMapping[i]) == 1 {
-						lastOne := getLastItem(ruleMapping[i])
-
-						for j := 0; j < len(validTickets[0]); j++ {
-							if i == j {
-								continue
-							}
-
-							delete(ruleMapping[j], lastOne)
-						}
-					}
+					delete(ruleMapping[rule.Name], i)
 				}
 			}
 		}
@@ -93,7 +83,7 @@ func part2() {
 	pretty.Println(ruleMapping)
 }
 
-func getLastItem(in map[string]struct{}) string {
+func getLastItem(in map[int]struct{}) int {
 	if len(in) != 1 {
 		panic("wat")
 	}
@@ -103,6 +93,14 @@ func getLastItem(in map[string]struct{}) string {
 	}
 
 	panic("wat 2")
+}
+
+func getKeys(in map[int]struct{}) (out []int) {
+	for k := range in {
+		out = append(out, k)
+	}
+
+	return
 }
 
 func parse() (Rules, []int, [][]int, error) {
